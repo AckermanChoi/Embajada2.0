@@ -9,34 +9,31 @@ load_dotenv(find_dotenv())
 
 def get_connection():
     return mysql.connector.connect(
-        host=os.getenv("DB_HOST", "localhost"),        # <— corregidos nombres
+        host=os.getenv("DB_HOST", "localhost"),
         user=os.getenv("DB_USER", "root"),
         password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "clientes_db"),
+        database=os.getenv("DB_NAME", "residentes_db"),
         port=int(os.getenv("DB_PORT", "3306")),
         charset="utf8mb4"
     )
 
-def fetch_all_clientes() -> List[Dict[str, Any]]:
+def fetch_all_residentes() -> List[Dict[str, Any]]:
     """
-    Ejecuta SELECT * FROM clientes y devuelve una lista de dicts.
+    Ejecuta SELECT * FROM residentes y devuelve una lista de dicts.
     """
     conn = None
     try:
         conn = get_connection()
-        # Opción C (anotación explícita del cursor):
         cur: MySQLCursorDict
         cur = conn.cursor(dictionary=True)  # type: ignore[assignment]
         try:
             cur.execute(
-                "SELECT id, nombre, apellido, email, telefono, direccion FROM clientes;"
+                """SELECT id, nombre, apellido, fecha_nacimiento, pasaporte, 
+                   email, telefono, direccion, ocupacion, estado_civil 
+                   FROM residentes;"""
             )
-            # Opción A: cast para contentar al type checker
             rows = cast(List[Dict[str, Any]], cur.fetchall())
             return rows
-
-            # Opción B alternativa (sin cast):
-            # return [dict(row) for row in cur.fetchall()]
         finally:
             cur.close()
     finally:
@@ -44,16 +41,20 @@ def fetch_all_clientes() -> List[Dict[str, Any]]:
             conn.close()
 
 
-def insert_cliente(
+def insert_residente(
     nombre: str, 
-    apellido: str, 
-    email: str, 
+    apellido: str,
+    fecha_nacimiento: str,
+    pasaporte: str,
+    email: str,
     telefono: str | None = None, 
-    direccion: str | None = None
+    direccion: str | None = None,
+    ocupacion: str | None = None,
+    estado_civil: str | None = None
 ) -> int:
     """
-    Inserta un nuevo cliente en la base de datos.
-    Retorna el ID del cliente insertado.
+    Inserta un nuevo residente en la base de datos.
+    Retorna el ID del residente insertado.
     """
     conn = None
     try:
@@ -62,10 +63,12 @@ def insert_cliente(
         try:
             cur.execute(
                 """
-                INSERT INTO clientes (nombre, apellido, email, telefono, direccion)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO residentes (nombre, apellido, fecha_nacimiento, pasaporte, 
+                                       email, telefono, direccion, ocupacion, estado_civil)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                (nombre, apellido, email, telefono, direccion)
+                (nombre, apellido, fecha_nacimiento, pasaporte, email, telefono, 
+                 direccion, ocupacion, estado_civil)
             )
             conn.commit()
             return cur.lastrowid or 0
@@ -76,9 +79,9 @@ def insert_cliente(
             conn.close()
 
 
-def delete_cliente(cliente_id: int) -> bool:
+def delete_residente(residente_id: int) -> bool:
     """
-    Elimina un cliente de la base de datos por su ID.
+    Elimina un residente de la base de datos por su ID.
     Retorna True si se eliminó correctamente, False si no se encontró.
     """
     conn = None
@@ -87,8 +90,8 @@ def delete_cliente(cliente_id: int) -> bool:
         cur = conn.cursor()
         try:
             cur.execute(
-                "DELETE FROM clientes WHERE id = %s",
-                (cliente_id,)
+                "DELETE FROM residentes WHERE id = %s",
+                (residente_id,)
             )
             conn.commit()
             return cur.rowcount > 0
@@ -99,10 +102,10 @@ def delete_cliente(cliente_id: int) -> bool:
             conn.close()
 
 
-def fetch_cliente_by_id(cliente_id: int) -> Dict[str, Any] | None:
+def fetch_residente_by_id(residente_id: int) -> Dict[str, Any] | None:
     """
-    Obtiene un cliente por su ID.
-    Retorna un dict con los datos del cliente o None si no existe.
+    Obtiene un residente por su ID.
+    Retorna un dict con los datos del residente o None si no existe.
     """
     conn = None
     try:
@@ -111,8 +114,10 @@ def fetch_cliente_by_id(cliente_id: int) -> Dict[str, Any] | None:
         cur = conn.cursor(dictionary=True)  # type: ignore[assignment]
         try:
             cur.execute(
-                "SELECT id, nombre, apellido, email, telefono, direccion FROM clientes WHERE id = %s",
-                (cliente_id,)
+                """SELECT id, nombre, apellido, fecha_nacimiento, pasaporte, 
+                   email, telefono, direccion, ocupacion, estado_civil 
+                   FROM residentes WHERE id = %s""",
+                (residente_id,)
             )
             result = cur.fetchone()
             return dict(result) if result else None
@@ -123,16 +128,20 @@ def fetch_cliente_by_id(cliente_id: int) -> Dict[str, Any] | None:
             conn.close()
 
 
-def update_cliente(
-    cliente_id: int,
+def update_residente(
+    residente_id: int,
     nombre: str,
     apellido: str,
+    fecha_nacimiento: str,
+    pasaporte: str,
     email: str,
     telefono: str | None = None,
-    direccion: str | None = None
+    direccion: str | None = None,
+    ocupacion: str | None = None,
+    estado_civil: str | None = None
 ) -> bool:
     """
-    Actualiza los datos de un cliente existente.
+    Actualiza los datos de un residente existente.
     Retorna True si se actualizó correctamente, False si no se encontró.
     """
     conn = None
@@ -142,11 +151,13 @@ def update_cliente(
         try:
             cur.execute(
                 """
-                UPDATE clientes 
-                SET nombre = %s, apellido = %s, email = %s, telefono = %s, direccion = %s
+                UPDATE residentes 
+                SET nombre = %s, apellido = %s, fecha_nacimiento = %s, pasaporte = %s,
+                    email = %s, telefono = %s, direccion = %s, ocupacion = %s, estado_civil = %s
                 WHERE id = %s
                 """,
-                (nombre, apellido, email, telefono, direccion, cliente_id)
+                (nombre, apellido, fecha_nacimiento, pasaporte, email, telefono, 
+                 direccion, ocupacion, estado_civil, residente_id)
             )
             conn.commit()
             return cur.rowcount > 0
