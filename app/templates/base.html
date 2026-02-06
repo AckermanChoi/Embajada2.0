@@ -17,28 +17,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">
-            <svg width="60" height="60" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <!-- Triángulo exterior -->
-                <polygon points="100,20 20,180 180,180" 
-                         fill="none" 
-                         stroke="#4facfe" 
-                         stroke-width="8"/>
-                
-                <!-- Rectángulo central (edificio/embajada) -->
-                <rect x="80" y="80" width="40" height="60" 
-                      fill="#4facfe" 
-                      stroke="#fff" 
-                      stroke-width="2"/>
-                
-                <!-- Ventanas -->
-                <rect x="85" y="90" width="10" height="10" fill="#1a1a2e"/>
-                <rect x="105" y="90" width="10" height="10" fill="#1a1a2e"/>
-                <rect x="85" y="110" width="10" height="10" fill="#1a1a2e"/>
-                <rect x="105" y="110" width="10" height="10" fill="#1a1a2e"/>
-                
-                <!-- Puerta -->
-                <rect x="90" y="125" width="20" height="15" fill="#1a1a2e"/>
-            </svg>
+            <img src="{{ url_for('static', path='/images/escudo-de-nicaragua-logo-png_seeklogo-260075.png') }}" alt="Escudo" width="60" height="60">
         </div>
         
         <ul class="nav-menu">
