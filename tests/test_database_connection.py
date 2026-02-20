@@ -177,7 +177,7 @@ if __name__ == "__main__":
 # a la base de datos funciona correctamente:
 #
 # 1. Asegúrate de estar en el directorio raíz del proyecto:
-#    cd /home/sulbaranjc/proyectos/python/backend/fastapi/monolito/embajada
+#    cd /ruta/a/tu/proyecto/embajada
 #
 # 2. Ejecuta el script de test:
 #    python tests/test_database_connection.py

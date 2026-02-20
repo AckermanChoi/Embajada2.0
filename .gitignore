@@ -1,4 +1,4 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python
+# Created by https://www.toptal.com/developers/gitignore/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 ### Python ###
@@ -172,10 +172,10 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
-# End of https://www.toptal.com/developers/gitignore/api/python
+# End of https://www.toptal.com/developers/gitignore/python
 .vscode
 
-# FastAPI specific
+# Framework specific
 *.db
 .env.local
 .env.*.local

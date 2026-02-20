@@ -6,7 +6,7 @@
 <div class="container">
     <!-- HERO SECTION -->
     <section class="hero-section">
-        <h1>Gestión de Residentes</h1>
+        <h1>Gestión de Residentes </h1>
         <p>Lista de residentes registrados en el sistema.</p>
     </section>
 
@@ -88,13 +88,16 @@
                                        title="Editar">
                                         ✏️
                                     </a>
-                                    <button type="button" 
-                                            class="btn btn-danger btn-delete" 
-                                            data-id="{{ residente.id }}" 
-                                            data-nombre="{{ residente.nombre }} {{ residente.apellido }}"
-                                            title="Eliminar">
-                                        🗑️
-                                    </button>
+                                    <form method="POST"
+                                          action="/residentes/eliminar/{{ residente.id }}"
+                                          class="delete-form"
+                                          data-nombre="{{ residente.nombre }} {{ residente.apellido }}">
+                                        <button type="submit"
+                                                class="btn btn-danger"
+                                                title="Eliminar">
+                                            🗑️
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
