@@ -23,9 +23,10 @@ body {
 
 /* Layout container */
 .container {
-  max-width: 1100px;
-  margin: 2.25rem auto;
-  padding: 0 1rem;
+  /* Allow content to span full width so tables can expand */
+  max-width: 100%;
+  margin: 1.5rem auto;
+  padding: 0 0.5rem;
 }
 
 /* Header / Navbar */
@@ -143,7 +144,11 @@ body {
 .table-responsive { overflow-x: auto; }
 
 .table {
-  width: 100%;
+  /* Make the table span the full viewport width */
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   border-collapse: collapse;
   background: #fff;
 }
