@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Residente - Sistema Embajada{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <h1>✏️ Editar Residente</h1>
+        <p>Modifique los datos del residente {{ residente.nombre }} {{ residente.apellido }}</p>
+    </section>
+
+    <!-- FORMULARIO -->
+    <div class="card">
+        <div class="card-header">
+            <h2>📝 Actualizar Datos del Residente</h2>
+        </div>
+        
+        <div class="form-container">
+            {% if errores %}
+            <div class="alert alert-danger">
+                <h4>⚠️ Errores de validación:</h4>
+                <ul>
+                    {% for error in errores %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/residentes/editar/{{ residente.id }}" class="residente-form">
+                <!-- SECCIÓN: INFORMACIÓN PERSONAL -->
+                <fieldset class="form-section">
+                    <legend>👤 Información Personal</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre" class="required">Nombre:</label>
+                            <input 
+                                type="text" 
+                                id="nombre" 
+                                name="nombre" 
+                                class="form-control"
+                                value="{{ residente.nombre }}"
+                                required
+                                maxlength="100"
+                                placeholder="Ingrese el nombre">
+                            <small class="form-text">Mínimo 2 caracteres, solo letras</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="apellido" class="required">Apellido:</label>
+                            <input 
+                                type="text" 
+                                id="apellido" 
+                                name="apellido" 
+                                class="form-control"
+                                value="{{ residente.apellido }}"
+                                required
+                                maxlength="100"
+                                placeholder="Ingrese el apellido">
+                            <small class="form-text">Mínimo 2 caracteres, solo letras</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_nacimiento" class="required">Fecha de Nacimiento:</label>
+                            <input 
+                                type="date" 
+                                id="fecha_nacimiento" 
+                                name="fecha_nacimiento" 
+                                class="form-control"
+                                value="{{ residente.fecha_nacimiento }}"
+                                required
+                                max="{{ today }}">
+                            <small class="form-text">No puede ser fecha futura</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estado_civil">Estado Civil:</label>
+                            <select id="estado_civil" name="estado_civil" class="form-control">
+                                <option value="">-- Seleccione --</option>
+                                <option value="Soltero" {% if residente.estado_civil == 'Soltero' %}selected{% endif %}>Soltero</option>
+                                <option value="Soltera" {% if residente.estado_civil == 'Soltera' %}selected{% endif %}>Soltera</option>
+                                <option value="Casado" {% if residente.estado_civil == 'Casado' %}selected{% endif %}>Casado</option>
+                                <option value="Casada" {% if residente.estado_civil == 'Casada' %}selected{% endif %}>Casada</option>
+                                <option value="Divorciado" {% if residente.estado_civil == 'Divorciado' %}selected{% endif %}>Divorciado</option>
+                                <option value="Divorciada" {% if residente.estado_civil == 'Divorciada' %}selected{% endif %}>Divorciada</option>
+                                <option value="Viudo" {% if residente.estado_civil == 'Viudo' %}selected{% endif %}>Viudo</option>
+                                <option value="Viuda" {% if residente.estado_civil == 'Viuda' %}selected{% endif %}>Viuda</option>
+                                <option value="Unión Libre" {% if residente.estado_civil == 'Unión Libre' %}selected{% endif %}>Unión Libre</option>
+                            </select>
+                            <small class="form-text">Opcional</small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- SECCIÓN: DOCUMENTACIÓN -->
+                <fieldset class="form-section">
+                    <legend>📋 Documentación</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pasaporte" class="required">Número de Pasaporte:</label>
+                            <input 
+                                type="text" 
+                                id="pasaporte" 
+                                name="pasaporte" 
+                                class="form-control"
+                                value="{{ residente.pasaporte }}"
+                                required
+                                maxlength="50"
+                                placeholder="Ej: A1234567">
+                            <small class="form-text">Mínimo 6 caracteres alfanuméricos</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ocupacion">Ocupación:</label>
+                            <input 
+                                type="text" 
+                                id="ocupacion" 
+                                name="ocupacion" 
+                                class="form-control"
+                                value="{{ residente.ocupacion if residente.ocupacion else '' }}"
+                                maxlength="100"
+                                placeholder="Ej: Ingeniero, Médico, etc.">
+                            <small class="form-text">Opcional, máximo 100 caracteres</small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- SECCIÓN: CONTACTO -->
+                <fieldset class="form-section">
+                    <legend>📞 Información de Contacto</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email" class="required">Correo Electrónico:</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-control"
+                                value="{{ residente.email }}"
+                                required
+                                maxlength="150"
+                                placeholder="ejemplo@dominio.com">
+                            <small class="form-text">Debe ser un email válido</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefono">Teléfono:</label>
+                            <input 
+                                type="tel" 
+                                id="telefono" 
+                                name="telefono" 
+                                class="form-control"
+                                value="{{ residente.telefono if residente.telefono else '' }}"
+                                maxlength="50"
+                                placeholder="Ej: +57 300 1234567">
+                            <small class="form-text">Opcional, 7-15 dígitos</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion">Dirección de Residencia:</label>
+                        <textarea 
+                            id="direccion" 
+                            name="direccion" 
+                            class="form-control"
+                            rows="3"
+                            maxlength="255"
+                            placeholder="Ingrese la dirección completa">{{ residente.direccion if residente.direccion else '' }}</textarea>
+                        <small class="form-text">Opcional, máximo 255 caracteres</small>
+                    </div>
+                </fieldset>
+
+                <!-- INFORMACIÓN ADICIONAL -->
+                <div class="info-box">
+                    <p><strong>📌 ID del Residente:</strong> {{ residente.id }}</p>
+                    <p><strong>📅 Última modificación:</strong> Actualizando ahora</p>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        💾 Actualizar Residente
+                    </button>
+                    <a href="/" class="btn btn-secondary btn-lg">
+                        ❌ Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Convertir pasaporte a mayúsculas automáticamente
+    document.getElementById('pasaporte').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+
+    // Establecer fecha máxima como hoy
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('fecha_nacimiento').setAttribute('max', today);
+    });
+</script>
+{% endblock %}
