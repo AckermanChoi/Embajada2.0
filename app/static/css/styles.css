@@ -19,6 +19,26 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.45;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  transition: background-image 0.4s ease-in-out;
+}
+
+body.bg-1 {
+  background-image: url("/static/images/fondo/Volcanoes_%20Nicaragua.jpg");
+}
+
+body.bg-2 {
+  background-image: url("/static/images/fondo/Mambacho,%20Nicaragua.jpg");
+}
+
+body.bg-3 {
+  background-image: url("/static/images/fondo/Paisaje%20Nicaraguense.jpg");
+}
+
+body.bg-4 {
+  background-image: url("/static/images/fondo/descarga%20%2819%29.jpg");
 }
 
 /* Layout container */
@@ -167,7 +187,7 @@ body {
   background: transparent;
 }
 
-.table tbody tr:hover { background: #fbfdff; }
+.table tbody tr:hover { background: #012447; }
 
 .table td a { color: #0f62fe; text-decoration: none; }
 
@@ -177,46 +197,6 @@ body {
 
 /* Footer */
 .table-footer { padding: 0.75rem 1rem; text-align:center; color:#94a3b8; }
-
-<<<<<<< HEAD
-/* Badges */
-.badge { padding: 0.2rem 0.5rem; border-radius:6px; font-weight:700; font-size:0.8rem; }
-=======
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-}
-
-/* ===================================================================
-   ICONOS Y UTILIDADES
-   =================================================================== */
-
-.icon {
-    display: inline-block;
-    width: 1.2rem;
-    height: 1.2rem;
-}
-
-.text-muted {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-}
-
-/* ===================================================================
-   FOOTER DE LA TABLA
-   =================================================================== */
-
-.table-footer {
-    background-color: #1a1a2e;
-    padding: 1rem 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-}
-
-.table-footer p {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
-}
 
 /* ===================================================================
    BADGES Y ETIQUETAS
@@ -235,188 +215,8 @@ body {
     color: white;
 }
 
-/* ===================================================================
-   FORMULARIOS
-   =================================================================== */
-
-.form-container {
-    padding: 2rem;
-}
-
-.residente-form {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.form-section {
-    border: 2px solid rgba(102, 126, 234, 0.3);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    background: rgba(42, 42, 78, 0.5);
-}
-
-.form-section legend {
-    color: #4facfe;
-    font-size: 1.2rem;
-    font-weight: 600;
-    padding: 0 0.5rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    color: #fff;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-}
-
-.form-group label.required::after {
-    content: " *";
-    color: #ff006e;
-    font-weight: bold;
-}
-
-.form-control {
-    padding: 0.75rem;
-    border: 2px solid rgba(102, 126, 234, 0.5);
-    border-radius: 5px;
-    background-color: #1a1a2e;
-    color: #fff;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #4facfe;
-    box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
-}
-
-.form-control::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-select.form-control {
-    cursor: pointer;
-}
-
-textarea.form-control {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.form-text {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-}
-
-/* Botones del formulario */
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid rgba(102, 126, 234, 0.3);
-}
-
-.btn-lg {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
-/* Alertas */
-.alert {
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-}
-
-.alert h4 {
-    margin-bottom: 0.75rem;
-    font-size: 1.1rem;
-}
-
-.alert ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.alert ul li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.alert ul li:last-child {
-    border-bottom: none;
-}
-
-.alert-danger {
-    background-color: rgba(220, 53, 69, 0.2);
-    border: 2px solid #dc3545;
-    color: #ff6b7a;
-}
-
-.alert-success {
-    background-color: rgba(40, 167, 69, 0.2);
-    border: 2px solid #28a745;
-    color: #5dd879;
-}
-
-/* Info box */
-.info-box {
-    background: rgba(79, 172, 254, 0.1);
-    border: 2px solid rgba(79, 172, 254, 0.3);
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.info-box p {
-    color: rgba(255, 255, 255, 0.8);
-    margin: 0.5rem 0;
-    font-size: 0.95rem;
-}
-
-.info-box strong {
-    color: #4facfe;
-}
-
-/* ===================================================================
-   RESPONSIVE
-   =================================================================== */
->>>>>>> 74ddfd3a6560f88eb2f5a5a42d94b4dc389d26e6
-
 /* Responsive tweaks */
 @media (max-width: 768px) {
-<<<<<<< HEAD
-  .nav-menu { display: none; }
-  .hero-section h1 { font-size: 1.25rem; }
-  .container { margin: 1rem auto; padding: 0 0.75rem; }
-  .table th, .table td { padding: 0.5rem; font-size: 0.9rem; }
-=======
     .navbar {
         flex-direction: column;
         gap: 1rem;
@@ -448,27 +248,4 @@ textarea.form-control {
     .action-buttons {
         flex-direction: column;
     }
-
-    /* Formularios responsive */
-    .form-container {
-        padding: 1rem;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .btn-lg {
-        width: 100%;
-    }
->>>>>>> 74ddfd3a6560f88eb2f5a5a42d94b4dc389d26e6
 }
-
-/* Small helpers */
-.sr-only { position:absolute; left:-9999px; }
-
