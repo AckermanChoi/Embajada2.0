@@ -278,3 +278,4 @@ def delete_residente_endpoint(residente_id: int):
         raise HTTPException(status_code=404, detail="Residente no encontrado")
 
     return DeleteResponse(mensaje="Residente eliminado exitosamente")
+                                    
