@@ -110,6 +110,12 @@ function App() {
     setResidenteToDelete(null)
   }
 
+  const handleLogoClick = () => {
+    setShowForm(false)
+    setEditingId(null)
+    setPage(1)
+  }
+
   const totalPages = Math.max(1, Math.ceil(residentes.length / pageSize))
   const pagedResidentes = residentes.slice(
     (page - 1) * pageSize,
@@ -119,7 +125,7 @@ function App() {
   return (
     <>
       <header className="header">
-        <div className="brand">
+        <div className="brand" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
           <div className="logo-frame">
             <img
               src="images/escudo-de-nicaragua-logo-png_seeklogo-260075.png"
