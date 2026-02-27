@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import date
@@ -176,6 +177,15 @@ class DeleteResponse(BaseModel):
 
 
 app = FastAPI(title="Sistema de Gestion de Residentes - Embajada")
+
+# Configurar CORS para permitir requests desde el frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.exception_handler(mysql.connector.Error)
