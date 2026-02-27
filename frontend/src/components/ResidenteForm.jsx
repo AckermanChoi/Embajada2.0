@@ -59,7 +59,7 @@ function ResidenteForm({ residente, onSubmit, onCancel }) {
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="nombre">Nombre *</label>
+          <label htmlFor="nombre">Nombres *</label>
           <input
             type="text"
             id="nombre"
@@ -71,7 +71,7 @@ function ResidenteForm({ residente, onSubmit, onCancel }) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="apellido">Apellido *</label>
+          <label htmlFor="apellido">Apellidos *</label>
           <input
             type="text"
             id="apellido"

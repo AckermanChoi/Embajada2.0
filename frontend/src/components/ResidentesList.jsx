@@ -16,8 +16,8 @@ function ResidentesList({ residentes, onEdit, onDelete, page, totalPages, onPage
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
             <th>Email</th>
             <th>Teléfono</th>
             <th>Ocupación</th>
