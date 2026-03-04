@@ -11,7 +11,7 @@ from pathlib import Path
 root_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(root_dir))
 
-from app.database import get_connection
+from backend.database import get_connection
 import mysql.connector
 from mysql.connector import Error
 

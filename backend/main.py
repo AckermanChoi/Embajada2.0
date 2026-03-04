@@ -7,7 +7,7 @@ from datetime import date
 import mysql.connector
 import re
 
-from app.database import (
+from backend.database import (
     fetch_all_residentes,
     insert_residente,
     delete_residente,
