@@ -82,22 +82,28 @@ class ResidenteBase(BaseModel):
     @field_validator('telefono')
     @classmethod
     def validar_telefono(cls, value: Optional[str]) -> Optional[str]:
-        if value is None or value.strip() == '':
-            return None
+        if not value or (isinstance(value, str) and value.strip() == ''):
+            raise ValueError('El teléfono es obligatorio')
 
         value = value.strip()
         telefono_limpio = re.sub(r'[\s\-\(\)]', '', value)
 
+        if len(telefono_limpio) < 7:
+            raise ValueError('El teléfono debe tener al menos 7 dígitos')
+        
+        if len(telefono_limpio) > 15:
+            raise ValueError('El teléfono no puede exceder 15 dígitos')
+
         if not re.match(r'^\+?\d{7,15}$', telefono_limpio):
-            raise ValueError('Formato de teléfono inválido. Debe contener entre 7 y 15 dígitos')
+            raise ValueError('Formato de teléfono inválido. Solo se permiten dígitos, +, - y espacios')
 
         return value
 
     @field_validator('direccion')
     @classmethod
     def validar_direccion(cls, value: Optional[str]) -> Optional[str]:
-        if value is None or value.strip() == '':
-            return None
+        if not value or (isinstance(value, str) and value.strip() == ''):
+            raise ValueError('La dirección es obligatoria')
 
         value = value.strip()
 
@@ -109,8 +115,8 @@ class ResidenteBase(BaseModel):
     @field_validator('ocupacion')
     @classmethod
     def validar_ocupacion(cls, value: Optional[str]) -> Optional[str]:
-        if value is None or value.strip() == '':
-            return None
+        if not value or (isinstance(value, str) and value.strip() == ''):
+            raise ValueError('La ocupación es obligatoria')
 
         value = value.strip()
 
@@ -125,8 +131,8 @@ class ResidenteBase(BaseModel):
     @field_validator('estado_civil')
     @classmethod
     def validar_estado_civil(cls, value: Optional[str]) -> Optional[str]:
-        if value is None or value.strip() == '':
-            return None
+        if not value or (isinstance(value, str) and value.strip() == ''):
+            raise ValueError('El estado civil es obligatorio')
 
         value = value.strip().title()
 

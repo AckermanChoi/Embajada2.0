@@ -19,25 +19,25 @@ function ResidenteForm({ residente, onSubmit, onCancel }) {
   // Reglas de validación (sincronizadas con backend)
   const validationRules = {
     nombre: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => v.trim().length >= 2, message: 'Debe tener al menos 2 caracteres' },
-      { test: v => v.trim().length <= 100, message: 'No puede exceder 100 caracteres' },
-      { test: v => /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(v), message: 'Solo se permiten letras y espacios' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => (v || '').trim().length >= 2, message: 'Debe tener al menos 2 caracteres' },
+      { test: v => (v || '').trim().length <= 100, message: 'No puede exceder 100 caracteres' },
+      { test: v => !(v || '') || /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(v), message: 'Solo se permiten letras y espacios' }
     ],
     apellido: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => v.trim().length >= 2, message: 'Debe tener al menos 2 caracteres' },
-      { test: v => v.trim().length <= 100, message: 'No puede exceder 100 caracteres' },
-      { test: v => /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(v), message: 'Solo se permiten letras y espacios' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => (v || '').trim().length >= 2, message: 'Debe tener al menos 2 caracteres' },
+      { test: v => (v || '').trim().length <= 100, message: 'No puede exceder 100 caracteres' },
+      { test: v => !(v || '') || /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(v), message: 'Solo se permiten letras y espacios' }
     ],
     pasaporte: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => v.trim().length >= 3, message: 'Debe tener al menos 3 caracteres' },
-      { test: v => v.trim().length <= 50, message: 'No puede exceder 50 caracteres' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => (v || '').trim().length >= 6, message: 'Debe tener al menos 6 caracteres' },
+      { test: v => (v || '').trim().length <= 50, message: 'No puede exceder 50 caracteres' }
     ],
     email: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Correo electrónico inválido' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => !(v || '') || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Correo electrónico inválido' }
     ],
     fecha_nacimiento: [
       { test: v => v.length > 0, message: 'Campo requerido' },
@@ -55,17 +55,18 @@ function ResidenteForm({ residente, onSubmit, onCancel }) {
       }, message: 'La fecha de nacimiento no es válida' }
     ],
     telefono: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => v.trim().length <= 20, message: 'No puede exceder 20 caracteres' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => (v || '').trim().length >= 7, message: 'Debe tener al menos 7 caracteres' },
+      { test: v => (v || '').trim().length <= 15, message: 'No puede exceder 15 caracteres' }
     ],
     direccion: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => v.trim().length <= 255, message: 'No puede exceder 255 caracteres' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => (v || '').trim().length <= 255, message: 'No puede exceder 255 caracteres' }
     ],
     ocupacion: [
-      { test: v => v.trim().length > 0, message: 'Campo requerido' },
-      { test: v => v.trim().length <= 100, message: 'No puede exceder 100 caracteres' },
-      { test: v => /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\.\-]+$/.test(v), message: 'Solo se permiten letras, espacios, puntos y guiones' }
+      { test: v => (v || '').trim().length > 0, message: 'Campo requerido' },
+      { test: v => (v || '').trim().length <= 100, message: 'No puede exceder 100 caracteres' },
+      { test: v => !(v || '') || /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\.\-]+$/.test(v), message: 'Solo se permiten letras, espacios, puntos y guiones' }
     ],
     estado_civil: [
       { test: v => v.length > 0, message: 'Campo requerido' }
@@ -106,7 +107,19 @@ function ResidenteForm({ residente, onSubmit, onCancel }) {
 
   useEffect(() => {
     if (residente) {
-      setFormData(residente)
+      // Convertir null values a strings vacíos para evitar problemas con validaciones
+      const normalizedData = {
+        nombre: residente.nombre || '',
+        apellido: residente.apellido || '',
+        fecha_nacimiento: residente.fecha_nacimiento || '',
+        pasaporte: residente.pasaporte || '',
+        email: residente.email || '',
+        telefono: residente.telefono || '',
+        direccion: residente.direccion || '',
+        ocupacion: residente.ocupacion || '',
+        estado_civil: residente.estado_civil || ''
+      }
+      setFormData(normalizedData)
     }
   }, [residente])
 
