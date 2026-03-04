@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import date
 import mysql.connector
+from mysql.connector.errors import IntegrityError, DatabaseError
 import re
 
 from backend.database import (
@@ -199,6 +201,39 @@ async def database_exception_handler(request, exc: mysql.connector.Error):
     )
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Manejador personalizado para errores de validación de Pydantic"""
+    errors = exc.errors()
+    
+    # Intentar crear un mensaje legible a partir de los errores
+    error_messages = []
+    for error in errors:
+        field = '.'.join(str(x) for x in error['loc'][1:])  # Omitir 'body'
+        msg = error.get('msg', 'Error de validación')
+        
+        # Hacer el mensaje más legible
+        if 'string_type' in msg or 'str' in msg:
+            msg = f"El campo '{field}' debe ser texto"
+        elif 'email' in msg.lower() or 'type=email' in str(error):
+            msg = f"El correo electrónico '{field}' no es válido"
+        elif 'int_type' in msg or 'int_parsing' in msg:
+            msg = f"El campo '{field}' debe ser un número entero"
+        elif 'date' in msg.lower():
+            msg = f"El campo '{field}' debe ser una fecha válida (formato: YYYY-MM-DD)"
+        else:
+            msg = f"{field}: {error.get('msg', 'Error de validación')}"
+        
+        error_messages.append(msg)
+    
+    detail = error_messages[0] if error_messages else "Error de validación en los datos enviados"
+    
+    return JSONResponse(
+        status_code=422,
+        content={"detail": detail}
+    )
+
+
 def map_rows_to_residentes(rows: List[dict]) -> List[ResidenteOutDB]:
     return [ResidenteOutDB(**row) for row in rows]
 
@@ -224,50 +259,88 @@ def get_residente(residente_id: int):
 
 @app.post("/residentes", response_model=ResidenteOutDB, status_code=201)
 def create_residente(residente: ResidenteCreate):
-    residente_id = insert_residente(
-        residente.nombre,
-        residente.apellido,
-        str(residente.fecha_nacimiento),
-        residente.pasaporte,
-        residente.email,
-        residente.telefono,
-        residente.direccion,
-        residente.ocupacion,
-        residente.estado_civil
-    )
+    try:
+        residente_id = insert_residente(
+            residente.nombre,
+            residente.apellido,
+            str(residente.fecha_nacimiento),
+            residente.pasaporte,
+            residente.email,
+            residente.telefono,
+            residente.direccion,
+            residente.ocupacion,
+            residente.estado_civil
+        )
 
-    created = fetch_residente_by_id(residente_id)
-    if created:
-        return ResidenteOutDB(**created)
+        created = fetch_residente_by_id(residente_id)
+        if created:
+            return ResidenteOutDB(**created)
 
-    payload = residente.model_dump()
-    return ResidenteOutDB(id=residente_id, **payload)
+        payload = residente.model_dump()
+        return ResidenteOutDB(id=residente_id, **payload)
+    
+    except IntegrityError as e:
+        # Error 1062 es duplicate entry
+        if "1062" in str(e) or "Duplicate entry" in str(e):
+            # Extraer el campo del error
+            if "email" in str(e).lower():
+                raise HTTPException(status_code=400, detail="El correo electrónico ya está registrado en el sistema")
+            elif "pasaporte" in str(e).lower():
+                raise HTTPException(status_code=400, detail="El número de pasaporte ya está registrado")
+            else:
+                raise HTTPException(status_code=400, detail="Este registro ya existe en el sistema")
+        else:
+            raise HTTPException(status_code=400, detail=f"Error de validación: {str(e)}")
+    
+    except DatabaseError as e:
+        raise HTTPException(status_code=500, detail=f"Error de base de datos: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")
 
 
 @app.put("/residentes/{residente_id}", response_model=ResidenteOutDB)
 def update_residente_endpoint(residente_id: int, residente: ResidenteUpdate):
-    actualizado = update_residente(
-        residente_id,
-        residente.nombre,
-        residente.apellido,
-        str(residente.fecha_nacimiento),
-        residente.pasaporte,
-        residente.email,
-        residente.telefono,
-        residente.direccion,
-        residente.ocupacion,
-        residente.estado_civil
-    )
+    try:
+        actualizado = update_residente(
+            residente_id,
+            residente.nombre,
+            residente.apellido,
+            str(residente.fecha_nacimiento),
+            residente.pasaporte,
+            residente.email,
+            residente.telefono,
+            residente.direccion,
+            residente.ocupacion,
+            residente.estado_civil
+        )
 
-    if not actualizado:
-        raise HTTPException(status_code=404, detail="Residente no encontrado")
+        if not actualizado:
+            raise HTTPException(status_code=404, detail="Residente no encontrado")
 
-    updated = fetch_residente_by_id(residente_id)
-    if updated:
-        return ResidenteOutDB(**updated)
+        updated = fetch_residente_by_id(residente_id)
+        if updated:
+            return ResidenteOutDB(**updated)
 
-    payload = residente.model_dump()
-    return ResidenteOutDB(id=residente_id, **payload)
+        payload = residente.model_dump()
+        return ResidenteOutDB(id=residente_id, **payload)
+    
+    except IntegrityError as e:
+        # Error 1062 es duplicate entry
+        if "1062" in str(e) or "Duplicate entry" in str(e):
+            # Extraer el campo del error
+            if "email" in str(e).lower():
+                raise HTTPException(status_code=400, detail="El correo electrónico ya está registrado en el sistema")
+            elif "pasaporte" in str(e).lower():
+                raise HTTPException(status_code=400, detail="El número de pasaporte ya está registrado")
+            else:
+                raise HTTPException(status_code=400, detail="Este registro ya existe en el sistema")
+        else:
+            raise HTTPException(status_code=400, detail=f"Error de validación: {str(e)}")
+    
+    except DatabaseError as e:
+        raise HTTPException(status_code=500, detail=f"Error de base de datos: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error inesperado: {str(e)}")
 
 
 @app.delete("/residentes/{residente_id}", response_model=DeleteResponse)

@@ -76,7 +76,24 @@ function App() {
         body: JSON.stringify(data)
       })
 
-      if (!response.ok) throw new Error('Error al guardar residente')
+      if (!response.ok) {
+        let errorMessage = 'Error al guardar residente'
+        try {
+          const errorData = await response.json()
+          if (errorData.detail) {
+            // Si detail es string, lo usamos; si es objeto, lo convertimos
+            errorMessage = typeof errorData.detail === 'string' 
+              ? errorData.detail 
+              : JSON.stringify(errorData.detail)
+          } else if (errorData.message) {
+            errorMessage = errorData.message
+          }
+        } catch (e) {
+          // Si no puede parsear JSON, usa mensaje generado
+          errorMessage = `Error del servidor (${response.status})`
+        }
+        throw new Error(errorMessage)
+      }
       
       await fetchResidentes()
       handleFormClose()
@@ -95,7 +112,22 @@ function App() {
       const response = await fetch(`${API_URL}/residentes/${residenteToDelete}`, {
         method: 'DELETE'
       })
-      if (!response.ok) throw new Error('Error al eliminar')
+      if (!response.ok) {
+        let errorMessage = 'Error al eliminar residente'
+        try {
+          const errorData = await response.json()
+          if (errorData.detail) {
+            errorMessage = typeof errorData.detail === 'string' 
+              ? errorData.detail 
+              : JSON.stringify(errorData.detail)
+          } else if (errorData.message) {
+            errorMessage = errorData.message
+          }
+        } catch (e) {
+          errorMessage = `Error del servidor (${response.status})`
+        }
+        throw new Error(errorMessage)
+      }
       await fetchResidentes()
     } catch (err) {
       setError(err.message)
